@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="top_rated">Top rated</string>
+    <string name="popular">Popular</string>
+    <string name="refresh">Refresh</string>
+    <string name="movie">Movies</string>
+    <string name="overview">Overview</string>
+    <string name="release_date">Release data</string>
+    <string name="original_title">Original title</string>
+    <string name="error_message">An error ocurred, please try again later</string>
+    <string name="error_internet_message">No internet connection please try again later</string>
+</resources>
