@@ -25,6 +25,7 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+
         myToolbar = findViewById(R.id.my_toolbar);
         posterImageView = findViewById(R.id.poster_iv);
         originalTitleTV = findViewById(R.id.originalTitle_tv);
@@ -34,22 +35,28 @@ public class DetailActivity extends AppCompatActivity {
 
         Bundle mBundle = getIntent().getExtras();
 
-        if(mBundle != null){
+        if (mBundle != null) {
             movie = mBundle.getParcelable("movie");
 
-            Picasso.with(getApplicationContext()).load("http://image.tmdb.org/t/p/w342//"+movie.getPoster_path()).into(posterImageView);
+            Picasso.with(getApplicationContext()).load("http://image.tmdb.org/t/p/w342//" + movie.getPoster_path()).into(posterImageView);
             originalTitleTV.setText(movie.getOriginal_title());
             releaseDateTV.setText(movie.getRelease_date());
             overviewTV.setText(movie.getOverview());
 
-            rating = Math.round((movie.getVote_average()/2));
+            rating = Math.round((movie.getVote_average() / 2));
 
-            mRatingBar.setRating((float)rating);
+            mRatingBar.setRating((float) rating);
 
             myToolbar.setTitle(movie.getTitle());
 
         }
 
         setSupportActionBar(myToolbar);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

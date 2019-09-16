@@ -1,4 +1,5 @@
 package com.alonso.popularmovies;
+
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -25,15 +26,17 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.alonso.popularmovies.utils.NetworkUtils;
 import com.squareup.okhttp.Response;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     private Response response;
@@ -47,11 +50,13 @@ public class MainActivity extends AppCompatActivity  {
     private Toolbar myToolbar;
     private String topRated = "Top rated movies";
     private String popular = "Popular movies";
+    private String favorites = "Favorites movies";
     private Activity activity;
     private TextView mErrorMessage;
     private TextView mErrorIntenetMessage;
     private ProgressBar mProgressBar;
     private FrameLayout mFrameLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,14 +77,14 @@ public class MainActivity extends AppCompatActivity  {
         movieListFromBackground = new ArrayList<>();
         activity = MainActivity.this;
 
-        String typeSort ="top_rated";
+        String typeSort = "top_rated";
         gridLayoutManager = new GridLayoutManager(mContext, 2, 1, false);
 
         mRecyclerView = findViewById(R.id.popular_movies_gv);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             loadData(typeSort);
         }
 
@@ -92,11 +97,11 @@ public class MainActivity extends AppCompatActivity  {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    public void loadData(String param){
+    public void loadData(String param) {
         new RetrieveMoviesAsync().execute(param);
     }
 
-    class RetrieveMoviesAsync extends AsyncTask<String, Void, ArrayList<Movie>>{
+    class RetrieveMoviesAsync extends AsyncTask<String, Void, ArrayList<Movie>> {
 
         @Override
         protected void onPreExecute() {
@@ -113,12 +118,12 @@ public class MainActivity extends AppCompatActivity  {
             String url = NetworkUtils.buildUrl(strings[0]);
             Log.d(TAG, url);
 
-            if(isOnline()){
+            if (isOnline()) {
 
                 response = mNetworkUtils.getResponseFromUrl(url);
                 Log.d(TAG + " Result 1:", response.toString());
 
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     try {
 
                         String jsonData = response.body().string();
@@ -127,7 +132,8 @@ public class MainActivity extends AppCompatActivity  {
                         JSONArray movies = mObject.getJSONArray("results");
                         Log.d(TAG + " Result 2:", movies.toString());
 
-                        Type listType = new TypeToken<List<Movie>>(){}.getType();
+                        Type listType = new TypeToken<List<Movie>>() {
+                        }.getType();
                         movieListFromBackground = mGson.fromJson(movies.toString(), listType);
 
                         return movieListFromBackground;
@@ -137,12 +143,12 @@ public class MainActivity extends AppCompatActivity  {
                         return null;
                     } catch (JSONException e) {
                         Log.d(TAG + " Failure 2", e.getMessage());
-                        return  null;
+                        return null;
                     }
-                }else {
+                } else {
                     showErrorMessage();
                 }
-            }else {
+            } else {
                 showErrorInternetConnectionMessage();
             }
             return null;
@@ -152,7 +158,7 @@ public class MainActivity extends AppCompatActivity  {
         protected void onPostExecute(ArrayList<Movie> movies) {
             super.onPostExecute(movies);
             mProgressBar.setVisibility(View.INVISIBLE);
-            if(movieListFromBackground.size()!=0){
+            if (movieListFromBackground.size() != 0) {
                 showMoviesData();
                 movieAdapter = new MovieAdapter(mContext, movies, activity);
                 mRecyclerView.setAdapter(movieAdapter);
@@ -176,19 +182,23 @@ public class MainActivity extends AppCompatActivity  {
             loadData("top_rated");
 
             return true;
-        }
-        else if(id == R.id.action_popular){
+        } else if (id == R.id.action_popular) {
             myToolbar.setTitle(popular);
             loadData("popular");
 
             return true;
-        }
-        else {
-            if(myToolbar.getTitle()==topRated){
+        } else if (id == R.id.action_favorites) {
+            myToolbar.setTitle(favorites);
+            //TODO cambiar parametro por favorito 
+            loadData("popular");
+
+            return true;
+        } else {
+            if (myToolbar.getTitle() == topRated) {
                 loadData("top_rated");
-            }else if(myToolbar.getTitle()==popular){
+            } else if (myToolbar.getTitle() == popular) {
                 loadData("popular");
-            }else{
+            } else {
                 loadData("top_rated");
             }
         }
@@ -205,7 +215,7 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
 
             movieListFromBackground = savedInstanceState.getParcelableArrayList("Movies");
             myToolbar.setTitle(savedInstanceState.getString("Title"));
